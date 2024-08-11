@@ -1,119 +1,134 @@
 package com.abdur.datastructres.list;
 
+import java.util.Iterator;
 import java.util.Objects;
 
-public class ArrayList<E> implements List<E>{
-    private static final int defaultSize = 10;
-    private final int maxSize;
-    private int listSize;
-    private int curr;
-    private final E[] listArray;
-    ArrayList(){
-        this(defaultSize);
+public class ArrayList<E> implements List<E> {
+    private int capacity = 0;
+    private int length = 0;
+    private E[] arr;
+
+    ArrayList() {
+        this(10);
     }
+
     @SuppressWarnings("unchecked")
-    ArrayList(int size){
-        maxSize = size;
-        listSize = curr = 0;
-        listArray = (E[]) new Object[size];
-    }
-    @Override
-    public void clear() {
-        for (int i =0; i<=listSize; i++){
-            listArray[i] = null;
-        }
-        listSize = curr = 0;
-    }
-
-    @Override
-    public void insert(E e) {
-        if (listSize>maxSize){
-            throw new IllegalStateException("List capacity exceeded");
-        }
-        //shift elements up
-        for(int i=listSize;i>curr;i--){
-            listArray[i] = listArray[i-1];
-        }
-        listArray[curr] = e;
-        listSize++;
-    }
-
-    @Override
-    public void append(E e) {
-        if (listSize>maxSize){
-            throw new IllegalStateException("List capacity exceeded");
-        }
-        listArray[listSize++] = e;
-    }
-
-    @Override
-    public E remove() {
-        if ((curr<0) || (curr>=listSize)){
-            return null;
-        }
-        //shift elements down
-        E e = listArray[curr];
-        for (int i = curr; i<listSize-1; i++){
-            listArray[i] = listArray[i+1];
-        }
-        listSize--;
-        return e;
-    }
-
-    @Override
-    public void moveToStart() {
-        curr=0;
-    }
-
-    @Override
-    public void moveToEnd() {
-        curr = listSize;
-    }
-
-    @Override
-    public void prev() {
-        if (curr!=0){
-            curr--;
-        }
-    }
-
-    @Override
-    public void next() {
-        if (curr<listSize)
-            curr++;
+    ArrayList(int capacity) {
+        this.capacity = capacity;
+        arr = (E[]) new Object[capacity];
     }
 
     @Override
     public int length() {
-        return listSize;
+        return length;
     }
 
     @Override
-    public int currentPos() {
-        return curr;
+    public boolean isEmpty() {
+        return length == 0;
     }
 
     @Override
-    public void moveToPos(int i) {
-        if ((i>=0)&&(i<=listSize))
-            curr = i;
+    public E get(int idx) {
+        return arr[idx];
     }
 
     @Override
-    public E getValue() {
-        return listArray[curr];
+    public void clear() {
+        for (int i = 0; i <= length; i++) {
+            arr[i] = null;
+        }
+        length = 0;
     }
 
     @Override
-    public String toString(){
+    public void insertAt(int idx, E e) {
+        mayBeIncreaseCapacity();
+        if (idx < 0 || idx >= length ) throw new IndexOutOfBoundsException();
+        //shift elements up
+        for (int i = length; i > idx; i--) {
+            arr[i] = arr[i - 1];
+        }
+        arr[idx] = e;
+    }
+
+    @Override
+    public void append(E elem) {
+        mayBeIncreaseCapacity();
+        arr[length++] = elem;
+    }
+
+    private void mayBeIncreaseCapacity() {
+        if (length + 1 > capacity) {
+            capacity *= 2;
+            E[] newArr = (E[]) new Object[capacity];
+            System.arraycopy(arr, 0, newArr, 0, arr.length);
+            arr = newArr;
+        }
+    }
+
+    @Override
+    public E removeAt(int idx) {
+        if (idx >= length && idx < 0) throw new IndexOutOfBoundsException();
+        E elem = arr[idx];
+        E[] newArr = (E[]) new Object[capacity];
+        for (int i = 0, j = 0; i < length; i++, j++) {
+            if (i == idx) j--;
+            else newArr[j] = arr[i];
+        }
+        arr = newArr;
+        length--;
+        return elem;
+    }
+
+    @Override
+    public boolean remove(E elem) {
+        int idx = indexOf(elem);
+        if (idx != -1) {
+            removeAt(idx);
+            return true;
+        } else return false;
+
+    }
+
+    @Override
+    public int indexOf(E elem) {
+        for (int i = 0; i < arr.length; i++) {
+            if (arr[i].equals(elem)) {
+                return i;
+            }
+        }
+        return -1;
+    }
+
+
+    @Override
+    public String toString() {
         StringBuilder listString = new StringBuilder();
         listString.append("[");
-        for(E e : listArray){
-            if (Objects.nonNull(e)){
+        for (E e : arr) {
+            if (Objects.nonNull(e)) {
                 listString.append(e).append(" ");
             }
         }
         listString.append("]");
         return listString.toString();
     }
+
+    public Iterator<E> iterator() {
+        return new Iterator<E>() {
+            int index = 0;
+
+            @Override
+            public boolean hasNext() {
+                return index < length;
+            }
+
+            @Override
+            public E next() {
+                return arr[index++];
+            }
+        };
+    }
+
 }

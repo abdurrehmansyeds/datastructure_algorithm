@@ -2,15 +2,12 @@ package com.abdur.datastructres.list;
 
 public interface List<E> {
     void clear();
-    void insert(E e);
+    boolean isEmpty();
+    E get(int idx);
+    void insertAt(int idx, E e);
+    E removeAt(int idx);
+    boolean remove(E elem);
+    int indexOf(E elem);
     void append(E e);
-    E remove();
-    void moveToStart();
-    void moveToEnd();
-    void prev();
-    void next();
     int length();
-    int currentPos();
-    void moveToPos(int i);
-    E getValue();
 }
