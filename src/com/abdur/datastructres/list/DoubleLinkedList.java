@@ -1,3 +1,4 @@
+/*
 package com.abdur.datastructres.list;
 
 import com.abdur.datastructres.base.Link;
@@ -108,3 +109,4 @@ public class DoubleLinkedList<E> implements List<E> {
         return curr.getElement();
     }
 }
+*/

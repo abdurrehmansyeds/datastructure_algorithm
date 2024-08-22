@@ -33,11 +33,8 @@ public class LinkedQueue<E> implements Queue<E> {
         if (size==0){
             throw new IllegalStateException("Queue is empty");
         }
-        E e = front.next().element();
-        front.setNext(front.next().next());
-        if (front.next()==null){
-            rear = front;
-        }
+        E e = front.element();
+        front = front.next();
         size--;
         return e;
 

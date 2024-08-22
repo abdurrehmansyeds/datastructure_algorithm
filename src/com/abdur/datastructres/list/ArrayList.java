@@ -50,6 +50,7 @@ public class ArrayList<E> implements List<E> {
             arr[i] = arr[i - 1];
         }
         arr[idx] = e;
+        length++;
     }
 
     @Override

@@ -28,7 +28,7 @@ public class SingleLinkedList<E> implements List<E> {
     @Override
     public E get(int idx) {
         int currIdx = 0;
-        for (trav = head; trav.next() != null; trav = trav.next()) {
+        for (trav = head; trav != null; trav = trav.next()) {
             if (currIdx == idx) {
                 return trav.element();
             }
@@ -40,17 +40,22 @@ public class SingleLinkedList<E> implements List<E> {
     @Override
     public void insertAt(int idx, E e) {
         if (idx < 0 || idx >= count) throw new IndexOutOfBoundsException();
-        int currIdx = 0;
-        for (trav = head; trav.next() != null; trav = trav.next(), currIdx++) {
-            if (currIdx == idx) {
-                //set new node as current's next and set new node's next as current next
-                trav.setNext(new Node<>(e, trav.next()));
-            }
+
+        if (idx == 0) {
+            head = new Node<>(e, head.next());
+            count++;
+            return;
         }
 
-        //set new node as tail node if given idx was pointed to last node
-        if (tail == trav) {
-            tail = trav.next();
+        int currIdx = 0;
+        Node<E> trav1 = head.next();
+        for (trav = head; trav1 != null; trav = trav.next(), trav1 = trav1.next(), currIdx++) {
+            if (currIdx == idx) {
+                //set new node as current's next and set new node's next as current next
+                trav.setNext(new Node<>(e, trav1));
+                //update tail node if given idx is the last node
+                if (idx == count -1 ) tail = trav.next();
+            }
         }
         count++;
     }
@@ -67,7 +72,7 @@ public class SingleLinkedList<E> implements List<E> {
 
         Node<E> trav1 = head.next();
         int currIdx = 0;
-        for (trav = head; trav1.next() != null; trav = trav.next(), trav1 = trav1.next(), currIdx++) {
+        for (trav = head; trav1 != null; trav = trav.next(), trav1 = trav1.next(), currIdx++) {
             if (currIdx == idx) {
                 if (trav1.next() != tail)
                     trav.setNext(trav1.next());
@@ -84,14 +89,15 @@ public class SingleLinkedList<E> implements List<E> {
     @Override
     public void append(E e) {
         //add new node to tail's next
-        tail = tail.setNext(new Node<E>(e, null));
+        if (head.element() == null) head.setElement(e);
+        else tail = tail.setNext(new Node<E>(e, null));
         count++;
     }
 
     @Override
     public boolean remove(E e) {
         Node<E> trav1 = head.next();
-        for (trav = head; trav1.next() != null; trav = trav.next(), trav1 = trav1.next()) {
+        for (trav = head; trav1 != null; trav = trav.next(), trav1 = trav1.next()) {
             if (trav1.element().equals(e)) {
                 if (trav1.next() != tail)
                     trav.setNext(trav1.next());
@@ -109,7 +115,7 @@ public class SingleLinkedList<E> implements List<E> {
     @Override
     public int indexOf(E elem) {
         int currIdx = 0;
-        for (trav = head; trav.next() != null; trav = trav.next(), currIdx++) {
+        for (trav = head; trav != null; trav = trav.next(), currIdx++) {
             if (trav.element().equals(elem)) {
                 return currIdx;
             }
@@ -128,7 +134,7 @@ public class SingleLinkedList<E> implements List<E> {
         StringBuilder elements = new StringBuilder("[");
         Node<E> temp = head;
         for (int i = 0; i < count; i++) {
-            elements.append(temp.next().element()).append(" ");
+            elements.append(temp.element()).append(" ");
             temp = temp.next();
         }
         elements.append("]");
